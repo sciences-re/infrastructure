@@ -9,6 +9,7 @@
     ../../services/terminfo.nix
 
     ../../services/website.nix
+    ../../services/keycloak.nix
   ];
 
   system.stateVersion = "20.09";
