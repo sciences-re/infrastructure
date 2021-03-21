@@ -7,6 +7,8 @@
     ../../services/terminfo.nix
   ];
 
+  system.stateVersion = "20.09";
+
   boot.cleanTmpDir = true;
 
   networking.hostName = "sciences.re";
