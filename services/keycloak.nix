@@ -6,12 +6,24 @@ in
   documentation.nixos.enable = false;
   imports = [ <nixos-unstable/nixos/modules/services/web-apps/keycloak.nix> ];
 
+  sops.secrets.database_password = {
+    format = "yaml";
+    key = "database_password";
+    mode = "0440";
+    owner = "postgres";
+    group = "postgres";
+  };
+
+  systemd.services.keycloakPostgreSQLInit = {
+    serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+  };
+
   services.keycloak = {
     package = unstable.keycloak;
     enable = true;
-    databasePasswordFile = "/etc/nixos/secrets/keycloak/db_password";
+    databasePasswordFile = "/run/secrets/database_password";
     frontendUrl = "https://auth.sciences.re/auth";
-    initialAdminPassword = "${lib.fileContents ../secrets/keycloak/initial_admin_password}";
+    initialAdminPassword = "toto";
     httpPort = "8080";
   };
 

@@ -7,6 +7,7 @@
 
     ../../services/ssh.nix
     ../../services/terminfo.nix
+    ../../services/sops.nix
 
     ../../services/website.nix
     ../../services/keycloak.nix
