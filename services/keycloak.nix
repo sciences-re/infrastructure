@@ -18,17 +18,25 @@ in
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
   };
 
+  systemd.services.keycloak.serviceConfig.BindReadOnlyPaths = "/etc/nixos/static/keycloak-sciences-re-theme.jar:/run/keycloak/deployments/keycloak-sciences-re-theme.jar";
+
   services.keycloak = {
     package = unstable.keycloak;
     enable = true;
     databasePasswordFile = "/run/secrets/database_password";
-    frontendUrl = "https://auth.sciences.re/auth";
+    frontendUrl = "https://auth.sciences.re/auth/";
+    forceBackendUrlToFrontendUrl = true;
     initialAdminPassword = "toto";
     httpPort = "8080";
+    extraConfig = {
+      "subsystem=undertow"."server=default-server"."http-listener=default".proxy-address-forwarding = true;
+      "subsystem=keycloak-server"."theme=defaults".welcomeTheme="logo-example";
+    };
   };
 
   services.nginx = {
     enable = true;
+    recommendedProxySettings = true;
     virtualHosts."auth.sciences.re" = {
       enableACME = true;
       forceSSL = true;
