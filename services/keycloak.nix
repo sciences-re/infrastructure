@@ -18,7 +18,11 @@ in
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
   };
 
-  systemd.services.keycloak.serviceConfig.BindReadOnlyPaths = "/etc/nixos/static/keycloak-sciences-re-theme.jar:/run/keycloak/deployments/keycloak-sciences-re-theme.jar";
+  systemd.services.keycloak.serviceConfig = {
+    BindReadOnlyPaths = "/etc/nixos/static/keycloak-sciences-re-theme.jar:/run/keycloak/deployments/keycloak-sciences-re-theme.jar";
+    MemoryAccounting = true;
+    MemoryMax = "512M";
+  };
 
   services.keycloak = {
     package = unstable.keycloak;

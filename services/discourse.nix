@@ -11,7 +11,8 @@
         
         default =
           ''
-            env: 
+            env:
+              UNICORN_WORKERS: 1
               DISCOURSE_DEVELOPER_EMAILS: remy@grunblatt.org
               DISCOURSE_HOSTNAME: "${config.nullable.services.discourse.hostname}"
               DISCOURSE_SMTP_ADDRESS: 172.17.0.1
@@ -30,6 +31,7 @@
                       - "git clone https://github.com/discourse/discourse-spoiler-alert"
                       - "git clone https://github.com/discourse/discourse-solved.git"
             params: 
+              db_shared_buffers: "512MB"
               db_default_text_search_config: pg_catalog.english
             run: 
               - exec: "echo \"Beginning of custom commands\""

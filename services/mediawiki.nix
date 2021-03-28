@@ -55,6 +55,12 @@ in
      ];
      $wgGroupPermissions['*']['autocreateaccount'] = true;
      $wgGroupPermissions['*']['createaccount'] = false;
+     $wgDefaultSkin = "timeless";
+     $wgLogos = [ '1x' => "$wgResourceBasePath/sciences-re-square-black.png" ];
+     wfLoadSkin( 'MonoBook' );
+     wfLoadSkin( 'Timeless' );
+     wfLoadSkin( 'Vector' );
+     $wgShowExceptionDetails = true;
     '';
 
     virtualHost = {
@@ -76,6 +82,9 @@ in
     virtualHosts."wiki.sciences.re" = {
       enableACME = true;
       forceSSL = true;
+      locations."=/sciences-re-square-black.png" = {
+         alias =  "/etc/nixos/static/sciences-re-square-black.png";
+      };
       locations."/" = {
         proxyPass = "http://127.0.0.1:7777";
       };
