@@ -11,9 +11,13 @@
 
     ../../services/website.nix
     ../../services/keycloak.nix
+    ../../services/opensmtpd.nix
+    ../../services/discourse.nix
   ];
 
   system.stateVersion = "20.09";
+
+  system.copySystemConfiguration = true;
 
   boot.cleanTmpDir = true;
 
