@@ -9,10 +9,11 @@
     ../../services/terminfo.nix
     ../../services/sops.nix
 
+    ../../services/opensmtpd.nix
     ../../services/website.nix
     ../../services/keycloak.nix
-    ../../services/opensmtpd.nix
     ../../services/discourse.nix
+    ../../services/mediawiki.nix
   ];
 
   system.stateVersion = "20.09";
