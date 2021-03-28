@@ -20,7 +20,7 @@ in
   services.mediawiki = {
     enable = true;
     package = unstable.mediawiki;
-    name = "Sciences.Re Wiki";
+    name = "Sciences.Re";
  
     passwordFile = "/run/secrets/mediawiki_admin_initial_password";
 
@@ -61,6 +61,8 @@ in
      wfLoadSkin( 'Timeless' );
      wfLoadSkin( 'Vector' );
      $wgShowExceptionDetails = true;
+     ## https://www.mediawiki.org/wiki/Manual:Short_URL
+     $wgArticlePath = "/wiki/$1";
     '';
 
     virtualHost = {
@@ -72,6 +74,18 @@ in
           port = 7777;
         }
       ];
+      extraConfig = ''
+        ## https://www.mediawiki.org/wiki/Manual:Short_URL/Apache
+
+        # Enable the rewrite engine
+        RewriteEngine On
+
+        # Short URL for wiki pages
+        RewriteRule ^/?wiki(/.*)?$ %{DOCUMENT_ROOT}/index.php [L]
+
+        # Redirect / to Main Page
+        RewriteRule ^/*$ %{DOCUMENT_ROOT}/index.php [L]
+      '';
     };
   };
 
