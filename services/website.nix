@@ -17,6 +17,8 @@ in
 
   services.nginx = {
     enable = true;
+    recommendedOptimisation = true;
+    recommendedGzipSettings = true;
     virtualHosts."sciences.re" = {
       enableACME = true;
       forceSSL = true;

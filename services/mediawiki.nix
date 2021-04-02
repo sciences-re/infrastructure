@@ -3,7 +3,10 @@ let
   unstable = import <nixos-unstable> {};
 in
 {
- 
+
+  imports = [ <nixos-unstable/nixos/modules/services/web-apps/mediawiki.nix> ];
+  disabledModules = [ "services/web-apps/mediawiki.nix" ];
+
   sops.secrets.mediawiki_admin_initial_password = {
     format = "yaml";
     key = "mediawiki_admin_initial_password";
@@ -29,10 +32,7 @@ in
     };
 
     extensions = {
-      VisualEditor = pkgs.fetchzip {
-        url = "https://extdist.wmflabs.org/dist/extensions/VisualEditor-REL1_35-f089b74.tar.gz";
-        sha256 = "1f7izrpcc3525pwn3cbyxb374lq5pk7pz2xvk0fydnjz5g3pkgrg";
-      };
+      VisualEditor = null;
       PluggableAuth = pkgs.fetchzip {
         url = "https://extdist.wmflabs.org/dist/extensions/PluggableAuth-REL1_35-2a465ae.tar.gz";
         sha256 = "0bv5cf44z33ydprnry2qpmjs0vk2p28kdnnfvz4dsr1rmwndnzch";
@@ -56,13 +56,17 @@ in
      $wgGroupPermissions['*']['autocreateaccount'] = true;
      $wgGroupPermissions['*']['createaccount'] = false;
      $wgDefaultSkin = "timeless";
-     $wgLogos = [ '1x' => "$wgResourceBasePath/sciences-re-square-black.png" ];
+     $wgLogos = [ '1x' => "$wgResourceBasePath/logo_small.svg" ];
+     $wgLanguageCode = "fr";
      wfLoadSkin( 'MonoBook' );
      wfLoadSkin( 'Timeless' );
      wfLoadSkin( 'Vector' );
      $wgShowExceptionDetails = true;
      ## https://www.mediawiki.org/wiki/Manual:Short_URL
      $wgArticlePath = "/wiki/$1";
+     ## https://www.mediawiki.org/wiki/Manual:File_cache
+     $wgUseFileCache = true; // default: false
+     $wgFileCacheDirectory = "$IP/cache"; // default: "{$wgUploadDirectory}/cache" which equals to "$IP/images/cache"
     '';
 
     virtualHost = {
@@ -93,11 +97,13 @@ in
   services.nginx = {
     enable = true;
     recommendedProxySettings = true;
+    recommendedOptimisation = true;
+    recommendedGzipSettings = true;
     virtualHosts."wiki.sciences.re" = {
       enableACME = true;
       forceSSL = true;
-      locations."=/sciences-re-square-black.png" = {
-         alias =  "/etc/nixos/static/sciences-re-square-black.png";
+      locations."=/logo_small.svg" = {
+         alias =  "/etc/nixos/static/logo_small.svg";
       };
       locations."/" = {
         proxyPass = "http://127.0.0.1:7777";
