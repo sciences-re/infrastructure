@@ -14,6 +14,8 @@
     ../../services/keycloak.nix
     ../../services/discourse.nix
     ../../services/mediawiki.nix
+
+    ../../services/backups
   ];
 
   system.stateVersion = "20.09";
@@ -34,6 +36,7 @@
     address = "2001:bc8:47b0:2640::";
   };
 
+  services.backups.enable = true;
 
   swapDevices = [ { device = "/var/swap"; size = 2048; } ];
 
