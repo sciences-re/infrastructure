@@ -36,8 +36,13 @@
     address = "2001:bc8:47b0:2640::";
   };
 
-  services.backups.enable = true;
-  services.backups.mediawiki.enable = false; # For now, we have to create the repository and prepare for rclone setup.
+  services.backups = {
+    enable = true;
+    passwordFile = "/run/secrets/backup_password";
+    startAt = "daily";
+    bucket = "sciences-re-backups";
+    mediawiki.enable = false; # For now, we have to create the repository and prepare for rclone setup.
+  };
 
   swapDevices = [ { device = "/var/swap"; size = 2048; } ];
 
