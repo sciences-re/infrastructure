@@ -14,4 +14,6 @@ mkShell {
   nativeBuildInputs = [
     (pkgs.callPackage <sops-nix> {}).sops-pgp-hook
   ];
+
+  buildInputs = [ pkgs.pwgen ];
 }
