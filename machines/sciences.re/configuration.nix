@@ -37,6 +37,7 @@
   };
 
   services.backups.enable = true;
+  services.backups.mediawiki.enable = false; # For now, we have to create the repository and prepare for rclone setup.
 
   swapDevices = [ { device = "/var/swap"; size = 2048; } ];
 
