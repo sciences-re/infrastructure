@@ -2,6 +2,44 @@
 with lib;
 let
   cfg = config.services.backups;
+  rcloneOpts = {
+    options = {
+      s3AccessKeyIdFile = mkOption {
+        description = "Filename to S3 Access Key ID";
+        type = types.str;
+        default = "/run/secrets/s3_access_key_id";
+      };
+      s3SecretKeyIdFile = mkOption {
+        description = "Filename to S3 Secret Key ID";
+        type = types.str;
+        default = "/run/secrets/s3_secret_key_id";
+      };
+
+      s3Endpoint = mkOption {
+        description = "S3 Endpoint, default to Scaleway Object Storage in Paris";a
+        default = "s3.fr-par.scw.cloud";
+        type = types.str;
+      };
+
+      s3Region = mkOption {
+        description = "S3 Region, default to Paris";
+        default = "fr-par";
+        type = types.str;
+      };
+
+      s3ACL = mkOption {
+        description = "S3 ACL, default to private";
+        default = "private";
+        type = types.str;
+      };
+
+      configFile = mkOption {
+        description = "Config filename, put it in a private path as secrets are written there";
+        default = "/run/secrets/rclone_config";
+        type = types.str;
+      };
+    };
+  };
 in
 {
   imports = [ ./mediawiki.nix ]; # TODO(Ryan): keycloak.nix
@@ -22,12 +60,35 @@ in
         description = "OnCalendar entry for systemd timers for backup units";
         type = types.str;
       };
+
+      rclone = mkOption {
+        description = "rclone-specific configuration";
+        type = types.submodule rcloneOpts;
+      };
     };
   };
 
   config = mkIf cfg.enable {
     # TODO(Ryan): Script to automatically mount the buckets.
     environment.systemPackages = [ cfg.package ];
+
+    systemd.services.init-rclone-remotes = {
+      script = ''
+        export S3_ACCESS_KEY_ID=$(cat ${cfg.s3AccessKeyIdFile})
+        export S3_SECRET_KEY_ID=$(cat ${cfg.s3SecretKeyIdFile})
+        cat > ${cfg.rclone.config} <<EOF
+        [${cfg.rclone.remote}]
+        type = s3
+        provider = Scaleway
+        env_auth = false
+        access_key_id = $S3_ACCESS_KEY_ID
+        secret_access_key = $S3_SECRET_KEY_ID
+        endpoint = ${cfg.rclone.s3Endpoint}
+        acl = ${cfg.rclone.s3ACL}
+        region = ${cfg.rclone.s3Region}
+        EOF
+      '';
+    };
   };
 }
 
