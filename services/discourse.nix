@@ -60,8 +60,12 @@
 
     nullable.services.discourse.hostname = "forum.sciences.re";
 
-    virtualisation.docker.enable = true;
-    networking.firewall.enable = false;
+
+    virtualisation.docker = {
+      enable = true;
+      autoPrune.enable = true;
+    };
+
     environment.systemPackages = [ pkgs.git ];
     systemd.services.discourse-setup = {
       wants = [ "docker.service" ];
