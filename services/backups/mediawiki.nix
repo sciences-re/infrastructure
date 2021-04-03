@@ -3,6 +3,7 @@ with lib;
 let
   parentCfg = config.services.backups;
   restic = parentCfg.package;
+  resticExtraArgs = parentCfg.restic.extraArgs;
   cfg = config.services.backups.mediawiki;
   mediawikiPasswordFile = config.services.mediawiki.passwordFile;
   dbCfg = config.services.mediawiki.database;
@@ -21,7 +22,7 @@ in
         };
 
         repository = mkOption { 
-          default = "mediawiki";
+          default = "rclone:${parentCfg.rclone.remote}:${parentCfg.bucket}/mediawiki";
           type = types.str;
         };
 
@@ -46,7 +47,7 @@ in
           #${pkgs.stdenv.shell}
           set -o pipefail
           export MYSQL_PWD=$(cat ${mediawikiPasswordFile})
-          ${pkgs.mysqldump}/bin/mysqldump -h ${dbCfg.host} -u ${dbCfg.user} -p ${dbCfg.name} | ${restic} backup --tag mediawiki --tag db --stdin --stdin-filename mediawiki-db.sql
+          ${pkgs.mysqldump}/bin/mysqldump -h ${dbCfg.host} -u ${dbCfg.user} -p ${dbCfg.name} | ${restic} backup --tag mediawiki --tag db --stdin --stdin-filename mediawiki-db.sql ${resticExtraArgs}
           # TODO(Ryan): Take a wiki dump too.
         '';
       };

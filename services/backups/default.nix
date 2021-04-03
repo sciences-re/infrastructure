@@ -2,6 +2,18 @@
 with lib;
 let
   cfg = config.services.backups;
+  resticOpts = {
+    options = {
+      extraArgs = mkOption {
+        description = ''Extra arguments to pass to restic
+          If this is modified, pay attention to restic behavior to find the rclone configuration path.
+          Otherwise, pass it yourself.
+        '';
+        type = types.str;
+        default = "-o rclone.args=\"serve restic --stdio --b2-hard-delete --config ${cfg.rclone.configFile}\"";
+      };
+    };
+  };
   rcloneOpts = {
     options = {
       s3AccessKeyIdFile = mkOption {
@@ -38,6 +50,12 @@ let
         default = "/run/secrets/rclone_config";
         type = types.str;
       };
+
+      remote = mkOption {
+        description = "Remote name for rclone, default to `backups`";
+        default = "backups";
+        type = types.str;
+      };
     };
   };
 in
@@ -60,6 +78,15 @@ in
         description = "OnCalendar entry for systemd timers for backup units";
         type = types.str;
       };
+      bucket = mkOption {
+        description = "Bucket name in Scaleway Object Storage";
+        type = types.str;
+      };
+
+      restic = mkOption {
+        description = "restic-specific configuration";
+        type = types.submodule resticOpts;
+      };
 
       rclone = mkOption {
         description = "rclone-specific configuration";
@@ -76,7 +103,7 @@ in
       script = ''
         export S3_ACCESS_KEY_ID=$(cat ${cfg.s3AccessKeyIdFile})
         export S3_SECRET_KEY_ID=$(cat ${cfg.s3SecretKeyIdFile})
-        cat > ${cfg.rclone.config} <<EOF
+        cat > ${cfg.rclone.configFile} <<EOF
         [${cfg.rclone.remote}]
         type = s3
         provider = Scaleway
