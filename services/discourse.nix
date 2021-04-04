@@ -8,6 +8,7 @@ let s3SecretKeyIdFile = "/run/secrets/s3_secret_key_id";
     s3BackupBucket = "sciences-re-backups";
 in
 {
+
   options = {
     nullable.services.discourse = {
       hostname = lib.mkOption {
@@ -30,8 +31,8 @@ in
               DISCOURSE_USE_S3: true
               DISCOURSE_S3_REGION: "${s3Region}"
               DISCOURSE_S3_ENDPOINT: "${s3Endpoint}"
-              DISCOURSE_S3_ACCESS_KEY_ID: S3_ACCESS_KEY_ID_REPLACE_ME
-              DISCOURSE_S3_SECRET_ACCESS_KEY: S3_SECRET_ACCESS_KEY_REPLACE_ME
+              DISCOURSE_S3_ACCESS_KEY_ID: "S3_ACCESS_KEY_ID_REPLACE_ME"
+              DISCOURSE_S3_SECRET_ACCESS_KEY: "S3_SECRET_ACCESS_KEY_REPLACE_ME"
               DISCOURSE_S3_BACKUP_BUCKET: "${s3BackupBucket}"
               DISCOURSE_BACKUP_LOCATION: s3
             hooks: 
@@ -76,6 +77,24 @@ in
     nullable.services.discourse.hostname = "forum.sciences.re";
 
 
+    sops.secrets.s3_secret_key_id = {
+      format = "yaml";
+      key = "s3_secret_key_id";
+      mode = "0440";
+      owner = "root";
+      group = "root";
+    };
+
+
+    sops.secrets.s3_access_key_id = {
+      format = "yaml";
+      key = "s3_access_key_id";
+      mode = "0440";
+      owner = "root";
+      group = "root";
+    };
+
+
     virtualisation.docker = {
       enable = true;
       autoPrune.enable = true;
@@ -95,8 +114,10 @@ in
         cp ${pkgs.writeText "discourse-app.yml" config.nullable.services.discourse.config} /var/discourse/containers/app.yml
         sed -i "s/S3_ACCESS_KEY_ID_REPLACE_ME/$(cat ${s3AccessKeyIdFile})/" /var/discourse/containers/app.yml
         sed -i "s/S3_SECRET_ACCESS_KEY_REPLACE_ME/$(cat ${s3SecretKeyIdFile})/" /var/discourse/containers/app.yml
+        echo "Secrets injected"
         cd /var/discourse
         git pull
+        echo "Rebuilding the app"
         bash ./launcher rebuild app
       '';
       serviceConfig = {

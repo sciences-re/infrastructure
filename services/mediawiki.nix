@@ -47,7 +47,7 @@ in
      $wgServer = "https://wiki.sciences.re";
      $wgEmergencyContact = "contact@sciences.re";
      $wgPasswordSender = "contact@sciences.re";
-     $wgGroupPermissions['*']['edit'] = false;
+     $wgGroupPermissions['*']['edit'] = true;
      $wgOpenIDConnect_Config['https://auth.sciences.re/auth/realms/master/'] = [
 	'clientID' => 'wiki.sciences.re',
 	'clientsecret' => 'b0b8779b-32c0-4d7e-89ab-400e5d287d77',
