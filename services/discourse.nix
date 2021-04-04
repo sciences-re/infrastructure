@@ -1,4 +1,12 @@
 {config, lib, pkgs, ...}:
+
+
+let s3SecretKeyIdFile = "/run/secrets/s3_secret_key_id";
+    s3AccessKeyIdFile = "/run/secrets/s3_access_key_id";
+    s3Endpoint = "https://s3.fr-par.scw.cloud";
+    s3Region = "fr-par";
+    s3BackupBucket = "sciences-re-backups";
+in
 {
   options = {
     nullable.services.discourse = {
@@ -19,6 +27,13 @@
               DISCOURSE_SMTP_PORT: 25
               LANG: en_US.UTF-8
               UNICORN_WORKERS: 2
+              DISCOURSE_USE_S3: true
+              DISCOURSE_S3_REGION: "${s3Region}"
+              DISCOURSE_S3_ENDPOINT: "${s3Endpoint}"
+              DISCOURSE_S3_ACCESS_KEY_ID: S3_ACCESS_KEY_ID_REPLACE_ME
+              DISCOURSE_S3_SECRET_ACCESS_KEY: S3_SECRET_ACCESS_KEY_REPLACE_ME
+              DISCOURSE_S3_BACKUP_BUCKET: "${s3BackupBucket}"
+              DISCOURSE_BACKUP_LOCATION: s3
             hooks: 
               after_code: 
                 - 
@@ -78,6 +93,8 @@
           git clone https://github.com/discourse/discourse_docker.git /var/discourse
         fi
         cp ${pkgs.writeText "discourse-app.yml" config.nullable.services.discourse.config} /var/discourse/containers/app.yml
+        sed -i "s/S3_ACCESS_KEY_ID_REPLACE_ME/$(cat ${s3AccessKeyIdFile})/" /var/discourse/containers/app.yml
+        sed -i "s/S3_SECRET_ACCESS_KEY_REPLACE_ME/$(cat ${s3SecretKeyIdFile})/" /var/discourse/containers/app.yml
         cd /var/discourse
         git pull
         bash ./launcher rebuild app
