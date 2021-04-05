@@ -23,6 +23,13 @@ in
       enableACME = true;
       forceSSL = true;
       root = uploadsRoot;
+      extraConfig = ''
+        location ~* \.(jpg|jpeg|webp|woff2|svg|png|gif|ico|css|js)$ {
+          expires 365d;
+        }
+        etag on;
+        add_header Cache-Control public;
+      '';
     };
   };
  
