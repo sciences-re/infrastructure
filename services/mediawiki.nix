@@ -33,6 +33,10 @@ in
 
     extensions = {
       VisualEditor = null;
+      WikiEditor = null;
+      SyntaxHighlight_GeSHi = null;
+      CodeEditor = null;
+      ParserFunctions = null;
       PluggableAuth = pkgs.fetchzip {
         url = "https://extdist.wmflabs.org/dist/extensions/PluggableAuth-REL1_35-2a465ae.tar.gz";
         sha256 = "0bv5cf44z33ydprnry2qpmjs0vk2p28kdnnfvz4dsr1rmwndnzch";
@@ -40,6 +44,10 @@ in
       OpenIDConnect = pkgs.fetchzip {
         url = "https://extdist.wmflabs.org/dist/extensions/OpenIDConnect-REL1_35-05d76c0.tar.gz";
         sha256 = "0ggs9kyqz3bqf5jh3m0vxc6n51nivi3ddrmwxb224jwainbhrn27";
+      };
+      TemplateStyles = pkgs.fetchzip {
+        url = "https://extdist.wmflabs.org/dist/extensions/TemplateStyles-REL1_35-7a40a6a.tar.gz";
+        sha256 = "0bs8lwliz7s7lj35331bzn2c8cd0qd6zffgjy8mcwv9k49hdymvr";
       };
     };
 
@@ -61,7 +69,13 @@ in
      wfLoadSkin( 'MonoBook' );
      wfLoadSkin( 'Timeless' );
      wfLoadSkin( 'Vector' );
-     $wgShowExceptionDetails = true;
+     wfLoadExtension( 'TemplateStyles' );
+     wfLoadExtension( 'WikiEditor' );
+     wfLoadExtension( 'SyntaxHighlight_GeSHi' );
+     wfLoadExtension( 'CodeEditor' );
+     wfLoadExtension( 'ParserFunctions' );
+     $wgDefaultUserOptions['usebetatoolbar'] = 1; // user option provided by WikiEditor extension
+
      ## https://www.mediawiki.org/wiki/Manual:Short_URL
      $wgArticlePath = "/wiki/$1";
      ## https://www.mediawiki.org/wiki/Manual:File_cache
@@ -89,6 +103,8 @@ in
 
         # Redirect / to Main Page
         RewriteRule ^/*$ %{DOCUMENT_ROOT}/index.php [L]
+        LoadModule remoteip_module modules/mod_remoteip.so
+        RemoteIPHeader X-Forwarded-For
       '';
     };
   };
