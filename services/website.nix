@@ -10,7 +10,8 @@ in
       useDefaultShell = true;
       home = "/home/www";
       openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKxOacH57XtCyOGzHXidJDSebND2qswa2yLTz/wko7pz actions@github"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKxOacH57XtCyOGzHXidJDSebND2qswa2yLTz/wko7pz actions@github" # Site Web
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxJs+cbK0NSLg+ReURFXEs/xN6EvmUnrkGhimAovMQs actions@github" # Postes
       ];
     };
   };
