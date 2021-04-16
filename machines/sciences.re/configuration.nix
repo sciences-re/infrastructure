@@ -26,12 +26,12 @@
   networking.firewall.allowPing = true;
  
   networking.interfaces.ens2.ipv6.addresses = [{
-    address = "2001:bc8:47b0:2640::1";
+    address = "2001:bc8:62c:2341::1";
     prefixLength = 64;
   }];
 
   networking.defaultGateway6 = {
-    address = "2001:bc8:47b0:2640::";
+    address = "2001:bc8:62c:2341::";
   };
 
 
