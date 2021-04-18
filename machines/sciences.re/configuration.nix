@@ -14,6 +14,7 @@
     ../../services/keycloak.nix
     ../../services/discourse.nix
     ../../services/mediawiki.nix
+    ../../services/matrix.nix
   ];
 
   system.stateVersion = "20.09";
@@ -22,7 +23,7 @@
 
   boot.cleanTmpDir = true;
 
-  networking.hostName = "sciences.re";
+  networking.hostName = "sciencesre";
   networking.firewall.allowPing = true;
  
   networking.interfaces.ens2.ipv6.addresses = [{

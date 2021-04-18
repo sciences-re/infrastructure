@@ -1,11 +1,5 @@
 {config, lib, pkgs, ...}:
-let
-  unstable = import <nixos-unstable> {};
-in
 {
-
-  imports = [ <nixos-unstable/nixos/modules/services/web-apps/mediawiki.nix> ];
-  disabledModules = [ "services/web-apps/mediawiki.nix" ];
 
   sops.secrets.mediawiki_admin_initial_password = {
     format = "yaml";
@@ -22,7 +16,6 @@ in
  
   services.mediawiki = {
     enable = true;
-    package = unstable.mediawiki;
     name = "Sciences.Re";
  
     passwordFile = "/run/secrets/mediawiki_admin_initial_password";
